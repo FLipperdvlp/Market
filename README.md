@@ -4,7 +4,7 @@
 
 ## 🔧 Технології
 
-- .NET 9 (або інша версія)
+- .NET 9 
 - Entity Framework Core
 - SQLite
 - Microsoft.AspNetCore.Identity (для хешування паролів)
