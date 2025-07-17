@@ -49,13 +49,15 @@ public class ProductService(MarketContext dbContext)
     
     
     //TODO:     DELETE
-    public void DeleteProduct(Guid id)
+    public bool DeleteProduct(Guid id)
     {
-        var product = dbContext.Products.FirstOrDefault(p => p.Id == id && !p.IsDeleted) ?? throw new Exception($"Product with id: {id} not found");
+        var product = dbContext.Products.Find(id) ?? throw new Exception($"Product with id: {id} not found");
+        
+        if(product == null) return false;
         
         product.IsDeleted = true;
-        
         dbContext.SaveChanges();;
+        return true;
     }
     
     
