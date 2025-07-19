@@ -1,91 +1,53 @@
+using System.Text;
 using Market.Middleware;
 using Market.Persistence;
 using Market.Services;
-
-// var builder = WebApplication.CreateBuilder(args);
-// {
-//     builder.Services.AddControllers();
-//     builder.Services.AddScoped<ProductService>();
-//     builder.Services.AddDbContext<MarketContext>();
-//
-//     builder.Services.AddSwaggerGen();
-// }
-//
-// var app = builder.Build();
-// {
-//     // До початку пайплайну додаємо обробник exception-ів
-//     app.UseCustomExceptionHandlingMiddleware();
-//     
-//     app.UseSwagger();
-//     app.UseSwaggerUI();
-//     
-//     app.MapControllers();
-//     app.Run();
-// }
-
-
-
-
-
-
-
-
-
-// TODO:       BUILDER
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
-
-//TODO:      ADD CONTROLLER
-builder.Services.AddControllers();
-
-//TODO:       ADD SCOPED  PRODUCT
-builder.Services.AddScoped<ProductService>();
-
-builder.Services.AddScoped<UserService>();
-
-//TODO:       ADD SCOPED MARKET
-builder.Services.AddScoped<MarketContext>();
-
-//TODO:       ADD SWAGGER
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-
-// TODO:       APP
-var app = WebApplication.Create(args);
-
-//TODO: 🆕  SWAGGER / SWAGGER UI
-app.UseSwagger();
-app.UseSwaggerUI();
-
-//TODO: 🏗️ CREATE CONTEXT MANUALLY 
-var dbContext = new MarketContext();
-
-//TODO: ✅ CREATE USER_SERVICE
-var userService = new UserService(dbContext);
-
-string password = "SuperSecret123";
-string password1 = "wokdfnwoefn123";
-bool IsTheSame = (password == password1);  
-
-
-if (IsTheSame)
 {
-        //TODO: 🆕 ADD USER
-        var user = userService.AddUser("380672122122567", "test5@example.com", password);
-        Console.WriteLine($"User created: {user.Id} - {user.Email}\nPassword is valid ✅");
-}
-else
-{
-        Console.WriteLine("User not created due to the Market Regulations\n Password is invalid ❌");
+    builder.Services.AddControllers();
+    
+    
+    builder.Services.AddScoped<ProductService>();
+    builder.Services.AddDbContext<MarketContext>();
+    builder.Services.AddScoped<UserService>();
+    builder.Services.AddScoped<JWTservice>();
+    
+    
+    builder.Services.AddSwaggerGen();
+    
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+
+                ValidIssuer = "MyAppIssuer",
+                ValidAudience = "MyAppAudience",
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("your-very-very-very-very-secure-secret-key-123456")),
+            };
+        });
+
+    builder.Services.AddAuthorization();
 }
 
-
-//TODO: 📋 WITHDRAWAL OF ALL USERS
-foreach (var u in userService.GetAllUsers())
+var app = builder.Build();
 {
-    Console.WriteLine($"{u.Id} - {u.Email} - {u.Phone}");
-}
+    // До початку пайплайну додаємо обробник exception-ів
+    app.UseCustomExceptionHandlingMiddleware();
 
-//TODO: APP RUN
-app.Run();
+    app.UseAuthentication();
+    app.UseAuthorization();
+    
+    app.UseSwagger();
+    app.UseSwaggerUI();
+    
+    app.MapControllers();
+    app.Run();
+}

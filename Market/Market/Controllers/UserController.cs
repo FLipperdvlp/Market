@@ -1,4 +1,5 @@
 using Market.Entities;
+using Market.Models.Auth;
 using Market.Models.Products;
 using Market.Models.Users;
 using Market.Services;
@@ -8,12 +9,12 @@ namespace Market.Controllers;
 
 
 [ApiController]
-[Route("[users]")]
+[Route("users")]
 public class UserController(UserService userService) : ControllerBase
 {
     //TODO:    REGISTER
     [HttpPost("register")]
-    public IActionResult Register([FromBody] RegisterUserRequestModel model)
+    public IActionResult Register([FromBody] RegisterRequestModel model)
     {
         try
         {
@@ -36,18 +37,18 @@ public class UserController(UserService userService) : ControllerBase
     }
     
     //TODO:    LOGIN
-    [HttpPost("login")]
-    public IActionResult Login([FromBody] LoginUserRequestModel model)
-    {
-        var user = userService
-            .GetAllUsers()
-            .FirstOrDefault(u =>
-                (u.Email == model.Identifier || u.Phone == model.Identifier));
-        
-        if(user == null) return BadRequest("Invalid username or password");
-        
-        if(!userService.VerifyPassword(user, model.Password, user.PasswordHash)) return BadRequest("Invalid password");
-        
-        return Ok(user);
-    }
+    // [HttpPost("login")]
+    // public IActionResult Login([FromBody] LoginUserRequestModel model)
+    // {
+    //     var user = userService
+    //         .GetAllUsers()
+    //         .FirstOrDefault(u =>
+    //             (u.Email == model.PhoneOrEmail || u.Phone == model.PhoneOrEmail));
+    //     
+    //     if(user == null) return BadRequest("Invalid username or password");
+    //     
+    //     if(!userService.VerifyPassword(user, model.Password, user.PasswordHash)) return BadRequest("Invalid password");
+    //     
+    //     return Ok(user);
+    // }
 }

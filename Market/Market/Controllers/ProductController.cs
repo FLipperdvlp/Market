@@ -47,7 +47,7 @@ public class ProductController(ProductService productService) : ControllerBase
     
     //TODO:    UPDATE PRODUCT
     [HttpPut("{productId:guid}")]
-    public ActionResult<UpdateProductResponseModel> UpdateProduct([FromBody] Guid productId, [FromBody] UpdateProductRequestModel model)
+    public ActionResult<UpdateProductResponseModel> UpdateProduct([FromRoute] Guid productId, [FromBody] UpdateProductRequestModel model)
     {
         var updatedProduct = productService.UpdateProduct(
             productId,
