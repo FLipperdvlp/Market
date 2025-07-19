@@ -1,9 +1,9 @@
 using System.Security.Claims;
+using Market.Entities;
 using Market.Models.Auth;
 using Market.Models.Users;
 using Market.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Market.Controllers;
@@ -13,7 +13,6 @@ namespace Market.Controllers;
 [Route("auth")]
 public class AuthController(UserService userService, JWTservice jwtService) : ControllerBase
 {
-    // Реєстрація користувача
     [HttpPost("register")]
     public ActionResult<RegisterResponseModel> Register([FromBody] RegisterRequestModel model)
     {
@@ -25,7 +24,6 @@ public class AuthController(UserService userService, JWTservice jwtService) : Co
         });
     }
 
-    // Логін
     [HttpPost("login")]
     public ActionResult<LoginResponseModel> Login([FromBody] LoginUserRequestModel model)
     {
@@ -37,14 +35,11 @@ public class AuthController(UserService userService, JWTservice jwtService) : Co
         });
     }
 
-    [Authorize] // тільки авторизовані користувачі, або 401
+    [Authorize] 
     [HttpGet("profile")]
     public ActionResult<ProfileResponseModel> Profile()
     {
-        // витягуємо id користувача з jwt токену
         var userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-
-        // отримуємо користувача по id
         var user = userService.GetUserById(userId);
 
         return Ok(new ProfileResponseModel
