@@ -1,6 +1,6 @@
 namespace Market.Models.Users;
 
-public class RegisterUserRequest
+public class RegisterUserRequestModel
 {
     public required string Phone { get; set; }
     public required string Email { get; set; }

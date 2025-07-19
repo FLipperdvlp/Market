@@ -13,12 +13,21 @@ public class UserController(UserService userService) : ControllerBase
 {
     //TODO:    REGISTER
     [HttpPost("register")]
-    public IActionResult Register([FromBody] RegisterUserRequest model)//TODO:      USER RESPONSE MODEL FOR THE BETTER SECURITY
+    public IActionResult Register([FromBody] RegisterUserRequestModel model)
     {
         try
         {
             var user = userService.AddUser(model.Phone, model.Email, model.Password);
-            return Ok(user);
+
+            var responseUser = new UserResponseModel
+            {
+                Id = user.Id,
+                Email = user.Email,
+                Phone = user.Phone,
+                Role = user.Role.ToString(),
+            };
+            
+            return Ok(responseUser);
         }
         catch (Exception ex)
         {
@@ -28,7 +37,7 @@ public class UserController(UserService userService) : ControllerBase
     
     //TODO:    LOGIN
     [HttpPost("login")]
-    public IActionResult Login([FromBody] LoginUserRequest model)
+    public IActionResult Login([FromBody] LoginUserRequestModel model)
     {
         var user = userService
             .GetAllUsers()
@@ -37,7 +46,7 @@ public class UserController(UserService userService) : ControllerBase
         
         if(user == null) return BadRequest("Invalid username or password");
         
-        if(!userService.VerifyPassword(model.Password, user.PasswordHash)) return BadRequest("Invalid password");
+        if(!userService.VerifyPassword(user, model.Password, user.PasswordHash)) return BadRequest("Invalid password");
         
         return Ok(user);
     }
