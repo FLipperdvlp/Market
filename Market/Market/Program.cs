@@ -14,7 +14,9 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddDbContext<MarketContext>();
     builder.Services.AddScoped<UserService>();
     builder.Services.AddScoped<JWTservice>();
+    builder.Services.AddScoped<UserProductService>();
     
+    builder.Services.AddHttpContextAccessor();
     
     builder.Services.AddSwaggerGen();
     

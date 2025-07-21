@@ -8,6 +8,6 @@ public class Product : BaseEntity
     public decimal Price { get; set; }
     public int Amount { get; set; }
     public ProductCategory Category { get; set; }
-    
-    public List<UserProduct>? UserProduct { get; set; }
+
+    public ICollection<UserProduct> UserProduct { get; set; } =  new List<UserProduct>();
 }

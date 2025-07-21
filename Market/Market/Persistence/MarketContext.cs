@@ -47,7 +47,7 @@ public class MarketContext : DbContext
         
         modelBuilder.Entity<UserProduct>()
             .HasOne(up => up.User)
-            .WithMany(user => user.Products)
+            .WithMany(user => user.UserProduct)
             .HasForeignKey(up => up.UserId);
 
         modelBuilder.Entity<UserProduct>()
