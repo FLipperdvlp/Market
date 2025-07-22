@@ -8,6 +8,11 @@ public class UserProductService(MarketContext dbContext)
     //TODO:     ADD PRODUCT TO USER
     public void AddProductToUser(Guid UserId, Guid productId)
     {
+        var user = dbContext.UserProducts.Find(UserId);
+        var product = dbContext.Products.Find(productId);
+        
+        if(user == null || product == null) throw new Exception("User or Product not found");
+        
         var userProduct = new UserProduct
         {
             UserId = UserId,

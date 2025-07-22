@@ -12,15 +12,15 @@ public class UserProductController(UserProductService userProductService) : Cont
     [HttpPost("add")]
     public IActionResult Add(Guid UserId, Guid ProductId)
     {
-        userProductService.AddProductToUser(UserId,  ProductId);
+        userProductService.AddProductToUser(UserId, ProductId);
         return Ok();
     }
     
     //TODO:     GET PRODUCT FOR USER
     [HttpGet("{userId}")]
-    public IActionResult GetProducts(Guid UserId)
+    public IActionResult GetProducts(Guid userId)
     {
-        var products = userProductService.GetProductsForUser(UserId);
+        var products = userProductService.GetProductsForUser(userId);
         
         return Ok(products);
     }
@@ -31,6 +31,6 @@ public class UserProductController(UserProductService userProductService) : Cont
     {
         userProductService.RemoveProductFromUser(UserId, ProductId);
         
-        return Ok();
+        return Ok("ProductFromUserDeleted");
     }
 }
