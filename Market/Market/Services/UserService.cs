@@ -108,6 +108,9 @@ public class UserService(MarketContext dbContext)
     
     public bool VerifyArgon2(string storedHash, string password)
     {
+        if (string.IsNullOrEmpty(storedHash) || string.IsNullOrEmpty(password))
+            return false;
+
         var parts = storedHash.Split('.');
         if (parts.Length != 2) return false;
 
@@ -126,6 +129,7 @@ public class UserService(MarketContext dbContext)
 
         return hash.SequenceEqual(attemptedHash);
     }
+
 
     
 }

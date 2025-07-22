@@ -2,16 +2,27 @@ using System.Text;
 using Market.Middleware;
 using Market.Persistence;
 using Market.Services;
+using Market.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 {
-    builder.Services.AddControllers();
+    var config = builder.Configuration;
+
+    builder.Services.Configure<JwtSettings>(config.GetSection("Jwt"));
+    // builder.Services.AddSingleton<JwtSettings>();
     
+    builder.Services.AddControllers();
+    builder.Services.AddDbContext<MarketContext>(options =>
+    {
+        // from appsetings.json from database
+        options.UseSqlite(config["DataBase:ConnectionString"]);
+    });
+    Console.WriteLine("Connection string: " + config["DataBase:ConnectionString"]);
     
     builder.Services.AddScoped<ProductService>();
-    builder.Services.AddDbContext<MarketContext>();
     builder.Services.AddScoped<UserService>();
     builder.Services.AddScoped<JWTservice>();
     builder.Services.AddScoped<UserProductService>();
@@ -30,9 +41,10 @@ var builder = WebApplication.CreateBuilder(args);
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
 
-                ValidIssuer = "MyAppIssuer",
-                ValidAudience = "MyAppAudience",
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("your-very-very-very-very-secure-secret-key-123456")),
+                ValidIssuer = config["Jwt:Issuer"],
+                ValidAudience = config["Jwt:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey
+                    (Encoding.UTF8.GetBytes(config["Jwt:SecretKey"]!)),
             };
         });
 

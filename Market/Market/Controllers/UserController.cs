@@ -43,7 +43,7 @@ public class UserController(UserService userService) : ControllerBase
             .FirstOrDefault(u =>
                 u.Email == model.PhoneOrEmail || u.Phone == model.PhoneOrEmail);
 
-        if (user == null)
+        if (user == null || string.IsNullOrEmpty(user.PasswordHash))
             return BadRequest("Invalid username or password");
 
         if (!userService.VerifyArgon2(user.PasswordHash, model.Password))
@@ -59,4 +59,5 @@ public class UserController(UserService userService) : ControllerBase
 
         return Ok(responseUser);
     }
+
 }

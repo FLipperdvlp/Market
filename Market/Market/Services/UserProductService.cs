@@ -1,32 +1,44 @@
 using Market.Entities;
 using Market.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace Market.Services;
 
 public class UserProductService(MarketContext dbContext)
 {
     //TODO:     ADD PRODUCT TO USER
-    public void AddProductToUser(Guid UserId, Guid productId)
+    public UserProduct AddProductToUser(Guid userId, Guid productId)
     {
-        var user = dbContext.UserProducts.Find(UserId);
+        var user = dbContext.Users.Find(userId);
         var product = dbContext.Products.Find(productId);
-        
-        if(user == null || product == null) throw new Exception("User or Product not found");
-        
+
+        if (user == null)
+            throw new Exception("User not found in database");
+        if (product == null)
+            throw new Exception("Product not found in database");
+
+        var existing = dbContext.UserProducts.Find(userId, productId);
+        if (existing != null)
+            throw new Exception("User already added this product to cart");
+
+
         var userProduct = new UserProduct
         {
-            UserId = UserId,
+            UserId = userId,
             ProductId = productId
         };
         
         dbContext.UserProducts.Add(userProduct);
         dbContext.SaveChanges();
+        
+        return userProduct;
     }
     
     //TODO:     GET PRODUCT FOR USER
-    public List<Product> GetProductsForUser(Guid userId)
+    public IEnumerable<Product> GetProductsForUser(Guid userId)
     {
         return dbContext.UserProducts
+            .Include(up => up.Product)
             .Where(up => up.UserId == userId)
             .Select(up => up.Product!)
             .ToList();

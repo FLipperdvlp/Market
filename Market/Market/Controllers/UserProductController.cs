@@ -1,28 +1,39 @@
+using System.Security.Claims;
+using Market.Models.Cart;
 using Market.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Market.Controllers;
 
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("cart")]
+[Authorize]
 public class UserProductController(UserProductService userProductService) : ControllerBase
 {
     //TODO:     ADD PRODUCT FRO USER
-    [HttpPost("add")]
-    public IActionResult Add(Guid UserId, Guid ProductId)
+    [HttpPost]
+    public IActionResult AddProductToCard([FromBody]  AddProductToCartRequestModel model)
     {
-        userProductService.AddProductToUser(UserId, ProductId);
+        //TODO: GET USER ID FROM JWT TOKEN
+        var userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+        //TODO: ADD PRODUCT INTO THE CART
+        userProductService.AddProductToUser(model.ProductId, userId);
+        
         return Ok();
     }
     
     //TODO:     GET PRODUCT FOR USER
-    [HttpGet("{userId}")]
-    public IActionResult GetProducts(Guid userId)
+    [HttpGet]
+    public ActionResult<IEnumerable<GetProductsFromCartResponseModel>> GetProductsFromCart()
     {
+        var userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
         var products = userProductService.GetProductsForUser(userId);
         
-        return Ok(products);
+        return Ok(products.Select(p => new GetProductsFromCartResponseModel(p)));
     }
     
     //TODO:     REMOVE PRODUCT FROM USER

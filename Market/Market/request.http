@@ -1,4 +1,19 @@
 @host = http://localhost:5000
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiMDE4OTE4Zi03NzE1LTQyZjgtOWFjMy0xMTk0NTIzM2I1OWIiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwianRpIjoiMmFlM2ZmZTctOTBlNi00YzAxLWFiNjEtODE2N2Y1Mzg3YTBhIiwiZXhwIjoxNzUzMjA1MDUyLCJpc3MiOiJNeUFwcElzc3VlciIsImF1ZCI6Ik15QXBwQXVkaWVuY2UifQ.Y6I0GGcpWHZvBuH95VvOzraMXE8t8exiPTnEU9hTOxw
+
 
 GET {{host}}/auth/profile
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiMDE4OTE4Zi03NzE1LTQyZjgtOWFjMy0xMTk0NTIzM2I1OWIiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwianRpIjoiNDRiYmQ1OTMtNDFiNi00NjQwLWEzNzMtZGMwZTUzZjkxZWNkIiwiZXhwIjoxNzUzMTMxOTg5LCJpc3MiOiJNeUFwcElzc3VlciIsImF1ZCI6Ik15QXBwQXVkaWVuY2UifQ.KB-rJdOkY55yZi5TMpnzVd19a_EPA-Yg6HQe0AUFpcE
+Authorization: Bearer {{token}}
+
+### ADD PRODUCT TO CART
+POST {{host}}/cart
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "productId": "0bd8ade5-74e2-4161-b98f-5a8eb7e0038d"
+}
+
+### GET PRODUCT FROM CART
+GET {{host}}/cart
+Authorization: Bearer {{token}}

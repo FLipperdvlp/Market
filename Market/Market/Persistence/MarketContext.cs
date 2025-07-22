@@ -9,16 +9,11 @@ public class MarketContext : DbContext
     public DbSet<Product> Products { get; set; }
     public DbSet<UserProduct> UserProducts { get; set; }
 
-    public MarketContext()
+    public MarketContext(DbContextOptions<MarketContext> options): base (options)
     {
         Database.EnsureCreated();
     }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseSqlite(connectionString:"Data Source=market.db");
-    }
-
+//connectionString:"Data Source=market.db"
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         //Phone 
